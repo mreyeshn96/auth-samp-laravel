@@ -33,6 +33,16 @@ return [
     'google' => [
         'client_id' => env("OAUTH_GOOGLE_CLIENT_ID"),
         'client_secret' => env('OAUTH_GOOGLE_CLIENT_SECRET'),
-        'redirect' => env("APP_URL").env("OAUTH_ROUTE_CALLBACK")
-    ]
+        'redirect' => env("APP_URL").env("OAUTH_GOOGLE_CALLBACK")
+    ],
+
+    'discord' => [    
+        'client_id' => env('OAUTH_DISCORD_CLIENT_ID'),  
+        'client_secret' => env('OAUTH_DISCORD_CLIENT_SECRET'),  
+        'redirect' => env("APP_URL").env("OAUTH_DISCORD_CALLBACK"),
+        
+        // Opcional
+        'allow_gif_avatars' => (bool) env('OAUTH_DISCORD_AVATAR_GIF', true),
+        'avatar_default_extension' => env('OAUTH_DISCORD_AVATAR_EXTENSION', 'jpg'), // only pick from jpg, png, webp
+    ],
 ];

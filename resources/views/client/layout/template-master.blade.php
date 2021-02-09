@@ -32,15 +32,10 @@
 
     <!-- BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
+    @yield("extra-css")
     <!-- END: Custom CSS-->
 
-    <script type="text/javascript">
-        var onloadCallback = function() {
-            grecaptcha.render('html_element', {
-                'sitekey' : '6LfCKt8ZAAAAAD2XOaC4uKwlxInvul8u3h4iOO0a'
-            });
-        };
-    </script>
+    @yield("extra-js-top")
 
 </head>
 <!-- END: Head-->
@@ -72,9 +67,18 @@
                                         @yield('page-content')
                                     </div>
                                 </div>
+                                @auth
+                                <div class="card-footer">
+                                    <div class="col-12">
+                                        Se ha iniciado sesión como {{ Auth::user()->acc_nickname }}
+                                    </div>
+                                    <div class="col-12">
+                                        <a href="">Cerrar sesión</a>
+                                    </div>
+                                </div>
+                                @endauth
                             </div>
                             
-
                         </div>
                     </div>
                 </section>
@@ -107,6 +111,8 @@
 
     <!-- BEGIN: Page JS-->
     <script src="{{ asset('app-assets/js/scripts/pages/coming-soon.js') }}"></script>
+
+    @yield("extra-js")
     <!-- END: Page JS-->
 
 </body>

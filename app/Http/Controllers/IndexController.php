@@ -17,16 +17,21 @@ class IndexController extends Controller
     {
         if( Auth::check() )
         {
-            return "LOGEADO";
+            return $this->auth_page();
         }
         else
         {
             return $this->login_page();
         }
-    }   
+    } 
 
     public function login_page()
     {
         return view("client.login");
+    }
+
+    public function auth_page()
+    {
+        return view("client.auth");
     }
 }

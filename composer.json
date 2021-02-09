@@ -17,6 +17,8 @@
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.2",
         "livewire/livewire": "^2.3",
+        "martinbean/socialite-discord-provider": "1.2",
+        "vxm/laravel-async": "^2.1",
         "wesleytodd/universal-forms": "master"
     },
     "require-dev": {
