@@ -12,12 +12,12 @@ use App\Models\AuthClient;
 class AuthController extends Controller
 {
     protected $instanceHandle;
-    protected $clientIp;
 
-    public function __construct(Request $request)
+    public function __construct()
     {
+        $this->middleware("proxycheckmd");
         $this->instanceHandle = new ApiAuthController();
-        $this->clientIp = env("APP_ON_CLOUDFLARE") ? $_SERVER['HTTP_CF_CONNECTION_IP'] : $request->ip();
+        
     }
 
     public function HealthlyService()
@@ -27,22 +27,15 @@ class AuthController extends Controller
 
     public function getStatusAuth($accountid, $userip)
     {
-
+        
     }
 
     public function existAuth($accountid, $userip)
     {
-        $existAuthRow = AuthHost::where("acc_id", $accountid)->orWhere("user_ip", "LIKE", $userip);
-        $existAuthApi = $this->instanceHandle->existAuth($userip);
+        $existAuthRow = AuthClient::where("acc_id", $accountid)->first();
+        //$existAuthApi = $this->instanceHandle->existAuth($userip);
 
-        if( $existAuthApi && !$existAuthRow )
-        {
-            // Si en un caso existe la IP en el API pero no en los registros.
-            $currentAuthState = $this->instanceHandle->getStatusAuth($userip);
-            
-        }
-
-        return true;
+        return $existAuthRow->ahost_id;
     }
 
     public function AddAuth($accountid, $userip)
@@ -53,9 +46,8 @@ class AuthController extends Controller
         $addHost->ahost_ip = "INPROGRESS";
         $addHost->save();
         
-
-        AuthClient::created([
-            "ahost_id" => $addHost->id,
+        AuthClient::create([
+            "ahost_id" => $addHost->ahost_id,
             "acc_id" => $accountid,
             "user_ip" => $this->clientIp
         ]);
@@ -63,37 +55,73 @@ class AuthController extends Controller
         return true;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $currentStatus = $this->existAuth(Auth::user()->acc_id, $this->clientIp);
-        $responseInfo = array();
-
-        if( strcmp($currentStatus, "NOTFOUND") === 0 )
+        if( $request->session()->has("can_auth") )
         {
-            $this->AddAuth(Auth::user()->acc_id, $this->clientIp);
-
-            do
+            if( $request->session()->get("can_auth") == 0 )
             {
-                $response[1] = $this->instanceHandle->getStatusAuth($this->clientIp);
-                sleep(1);
+                $responseInfo[0] = "INVALID_SESSION_ID";
+                $responseInfo[1] = "";
             }
-            while( strcmp($response[1], "INPROGRESS") === 0 );
-            $response[0] = "SUCCESS_AUTH";
         }
-        else if( strcmp($currentStatus, "INPROGRESS") === 0 )
+        
+        $this->clientIp = env("APP_ON_CLOUDFLARE") ? $_SERVER['HTTP_CF_CONNECTING_IP'] : $request->ip();
+
+        //$currentExist = $this->existAuth(Auth::user()->acc_id, $this->clientIp);
+        $currentExist = $this->instanceHandle->existAuth($this->clientIp);
+        $responseInfo = [];
+
+        $responseInfo[1] = "";
+
+        if( $currentExist )
         {
-            $response[0] = "INPROGRESS_AUTH";
-        }
-        else if( filter_var($currentStatus, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) )
-        {
-            $response[0] = "SUCCESS_AUTH";
-            $response[1] = $currentStatus;
+            $currentStatus = $this->instanceHandle->getStatusAuth($this->clientIp);            
+            if( strcmp($currentStatus, "INPROGRESS") === 0 )
+            {
+                $responseInfo[0] = "INPROGRESS_AUTH";
+            }
+            else if( filter_var($currentStatus, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) )
+            {
+                AuthHost::where("ahost_id", "=", "$currentExist")->update([
+                    'ahost_ip' => $currentStatus
+                ]);
+
+                $responseInfo[0] = "SUCCESS_AUTH";
+                $responseInfo[1] = $currentStatus;
+            }
+            else
+            {
+                $responseInfo[0] = "ERROR_AUTH";
+                $responseInfo[1] = $currentStatus;
+            }
         }
         else
         {
+            $this->AddAuth(Auth::user()->acc_id, $this->clientIp);
+            $currentSecond = 0;
+            do
+            {
+                if( $currentSecond >= 40 )
+                {
+                    break;
+                }
+                $responseInfo[1] = $this->instanceHandle->getStatusAuth($this->clientIp);
+                $currentSecond++;
+                sleep(1);
+            }
+            while( strcmp($responseInfo[1], "INPROGRESS") === 0 );
 
+            if( $currentSecond >= 40 )
+            {
+                $request->session()->flash("demoring_auth", "1");
+                return redirect()->route("index.auth");
+            }
+            $responseInfo[0] = "SUCCESS_AUTH";
         }
 
-        return view("client.message", compact("responseInfo"));
+        $request->session()->flash("result_code", $responseInfo[0]);
+        $request->session()->flash("result_aux", $responseInfo[1]);
+        return redirect()->route("index.auth");
     }
 }

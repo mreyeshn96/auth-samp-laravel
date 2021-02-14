@@ -18,7 +18,7 @@ class AuthClient extends Model
         'ahost_id'
     ];
 
-    public function AuthHost()
+    public function ClientHost()
     {
         return $this->hasMany(AuthHost::class, "ahost_id", "ahost_id");
     }

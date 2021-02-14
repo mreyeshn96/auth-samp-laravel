@@ -73,7 +73,7 @@
                                         Se ha iniciado sesión como {{ Auth::user()->acc_nickname }}
                                     </div>
                                     <div class="col-12">
-                                        <a href="">Cerrar sesión</a>
+                                        <a href="{{ route("user.logout") }}">Cerrar sesión</a>
                                     </div>
                                 </div>
                                 @endauth

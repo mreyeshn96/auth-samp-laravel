@@ -17,6 +17,11 @@ class SocialiteController extends Controller
     public function __construct(Request $request)
     {
         $this->driverSocial = $request->route('driver_name');
+        
+        if( strcmp($this->driverSocial, "discord") !== 0 && strcmp($this->driverSocial, "google") !== 0 )
+        {
+            die("-");
+        }
     }
 
     public function redirect(Request $request)
@@ -31,7 +36,9 @@ class SocialiteController extends Controller
 
         if( !$gameAccount )
         {
-            return view("client.message", ['message_code' => 'NOT_FOUND_ACCOUNT']);
+            $request->session()->flash("result_code", "NOT_FOUND_ACCOUNT");
+            $request->session()->flash("result_aux", "");
+            return redirect()->route("index.auth");
         }
         else
         {

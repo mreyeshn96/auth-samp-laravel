@@ -18,7 +18,7 @@ class GameAccount extends Model
      * @var array
      */
     protected $fillable = [
-        'Nick', 'email', 'Contra',
+        'Nick', 'email', 'Contra', 'Certificado',
     ];
 
     /**

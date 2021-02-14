@@ -17,6 +17,7 @@ class CreateAccountTable extends Migration
             $table->integer("acc_id")->autoIncrement();
             $table->string("acc_nickname", 30);
             $table->string("acc_name", 30)->default("");
+            $table->integer("acc_admin", 30)->default(0);
             $table->integer("game_acc_id");
             $table->string("o2_google_id", 126)->default('');
             $table->string("o2_discord_id", 126)->default('');

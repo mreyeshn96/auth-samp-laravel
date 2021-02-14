@@ -63,5 +63,12 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'grecaptchamd' => \App\Http\Middleware\GoogleRecaptchaResponseMiddleware::class,
+        'proxycheckmd' => \App\Http\Middleware\ProxyCheckMiddleware::class,
+        'certificatemd' => \App\Http\Middleware\CertificateMiddleware::class,
+        'maintmodemd' => \App\Http\Middleware\MaintenanceModeMiddleware::class,
+        'isbannedmd' => \App\Http\Middleware\IsBannedMiddleware::class,
+        'role' => \Spatie\Permission\Middlewares\RoleMiddleware::class,
+        'permission' => \Spatie\Permission\Middlewares\PermissionMiddleware::class,
+        'role_or_permission' => \Spatie\Permission\Middlewares\RoleOrPermissionMiddleware::class,
     ];
 }

@@ -18,13 +18,14 @@
         "laravel/ui": "^3.2",
         "livewire/livewire": "^2.3",
         "martinbean/socialite-discord-provider": "1.2",
+        "spatie/laravel-permission": "^4.0",
         "vxm/laravel-async": "^2.1",
         "wesleytodd/universal-forms": "master"
     },
     "require-dev": {
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.9.1",
-        "laravel/sail": "^1.0.1",
+        
         "mockery/mockery": "^1.4.2",
         "nunomaduro/collision": "^5.0",
         "phpunit/phpunit": "^9.3.3"
