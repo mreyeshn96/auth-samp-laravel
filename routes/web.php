@@ -21,18 +21,18 @@ use App\Models\AuthClient;
 |
 */
 
-Route::get('/', [App\Http\Controllers\IndexController::class, 'index'])->middleware("throttle:10,1")->name("index.auth");
+Route::get('/', [App\Http\Controllers\IndexController::class, 'index'])->middleware(["throttle:10,1", "isbannedmd"])->name("index.auth");
 Route::get('/logout', function() {
     Auth::logout();
     return redirect()->route("index.auth");
 })->name("user.logout");
 
-Route::get('oauth/{driver_name}/redirect', [App\Http\Controllers\SocialiteController::class, 'redirect'])->name("oauth.redirect");
-Route::get('oauth/{driver_name}/callback', [App\Http\Controllers\SocialiteController::class, 'callback'])->name("oauth.callback");
+Route::get('/oauth/{driver_name}/redirect', [App\Http\Controllers\SocialiteController::class, 'redirect'])->name("oauth.redirect");
+Route::get('/oauth/{driver_name}/callback', [App\Http\Controllers\SocialiteController::class, 'callback'])->name("oauth.callback");
 
 Route::group(['middleware' => ['grecaptchamd', 'certificatemd']], function() {
     Route::post('run/auth', [App\Http\Controllers\AuthController::class, 'index'])->name("run.auth");
-    
+
 });
 
 Route::group(['prefix' => 'admin', 'middleware' => ['role:super-admin']], function() {

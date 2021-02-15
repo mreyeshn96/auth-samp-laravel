@@ -16,20 +16,27 @@ class IndexController extends Controller
 
     public function index(Request $request)
     {
-        if( $request->session()->has("result_code") )
+        if( env("MAINTENANCE_MODE") == false )
         {
-            return $this->message_page($request);
-        }
-        else
-        {
-            if( Auth::check() )
+            if( $request->session()->has("result_code") )
             {
-                return $this->auth_page($request);
+                return $this->message_page($request);
             }
             else
             {
-                return $this->login_page($request);
+                if( Auth::check() )
+                {
+                    return $this->auth_page($request);
+                }
+                else
+                {
+                    return $this->login_page($request);
+                }
             }
+        }
+        else
+        {
+            return view("client.maintenance");
         }
     }
 
@@ -41,7 +48,7 @@ class IndexController extends Controller
 
     public function auth_page($request)
     {
-        
+
         $request->session()->put("can_auth", "1");
         return view("client.auth");
     }

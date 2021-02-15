@@ -27,8 +27,8 @@ class Account extends Authenticatable
         return $this->hasOne(GameAccount::class, 'ID', 'game_acc_id');
     }
 
-    // public function BannedInfo()
-    // {
-    //     return $this->hasOne(BannedAccount::class, 'jugador', 'game_acc_id');
-    // }
+    public function BannedInfo()
+    {
+        return $this->hasOne(BannedAccount::class, 'jugador', 'game_acc_id');
+    }
 }

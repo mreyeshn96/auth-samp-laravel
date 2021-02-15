@@ -32,6 +32,7 @@
 
     <!-- BEGIN: Custom CSS-->
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/css/style.css') }}">
+    @livewireStyles
     @yield("extra-css")
     <!-- END: Custom CSS-->
 
@@ -78,11 +79,16 @@
                                 </div>
                                 @endauth
                             </div>
-                            
+                            @if( env("API_SAMP_SHOW_INFO") )
+                            <div class="col-12 text-center my-2">
+                                <livewire:totalsampplayers />
+                            </div>
+                            @endif
                         </div>
                     </div>
                 </section>
                 <!--/ coming soon flat design -->
+
 
             </div>
         </div>
@@ -111,7 +117,7 @@
 
     <!-- BEGIN: Page JS-->
     <script src="{{ asset('app-assets/js/scripts/pages/coming-soon.js') }}"></script>
-
+    @livewireScripts
     @yield("extra-js")
     <!-- END: Page JS-->
 
