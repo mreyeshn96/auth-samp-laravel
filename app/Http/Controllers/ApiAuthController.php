@@ -13,7 +13,7 @@ class ApiAuthController extends Controller
     public function __construct()
     {
         $this->apiKey = env("API_AUTH_KEY");
-        $this->apiUrl = "https://test.tradingfreecurso.site/api.php?api_key=$this->apiKey";
+        $this->apiUrl = "API_URL?$this->apiKey";
     }
 
     public function Healthly()
